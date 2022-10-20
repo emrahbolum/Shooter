@@ -15,7 +15,7 @@ AShooterCharacter::AShooterCharacter()
 void AShooterCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	OutputLog();
 }
 
 // Called every frame
@@ -32,3 +32,16 @@ void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 
 }
 
+void AShooterCharacter::OutputLog()
+{
+	//UE_LOG FORMAT STRING 
+	// 
+	//Normal text
+	UE_LOG(LogTemp, Warning, TEXT("Normal text"))
+
+	int MyInt{ 32 }; //süslü parantezde yapmamýzýn sebebi hatayý önlemektir. Örneðin int tanýmlayýp int MyInt {33.4} yaparsak hata verecektir.
+	UE_LOG(LogTemp, Warning, TEXT("MyInt value: %d"), MyInt)
+
+
+
+}
