@@ -28,4 +28,18 @@ public:
 
 	void OutputLog();
 
+private:
+	/*Heryerde gözüksün, blueprintten ulaþýlabilsin ama deðiþtirilmesin, 
+	kategori kamera olsun, özel (private) tanýmladýðýmýz için bu keywordu
+	yazmamýz gerekiyor. yoksa kabul etmezdi*/
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	class USpringArmComponent* CameraBoom;
+
+public:
+	//GET CAMERABOOM
+	FORCEINLINE USpringArmComponent* GetCameraBoom() const { return CameraBoom; }		
+	//herhangi bir deðer deðiþtirmediðimiz için const yaptýk
+	//Forceinline dediðimizde sadece >>return CameraBoom<< kýsmýný derlemeye çalýþacak
+
+
 };
