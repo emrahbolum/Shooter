@@ -3,6 +3,7 @@
 
 #include "ShooterCharacter.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Camera/CameraComponent.h"
 // Sets default values
 AShooterCharacter::AShooterCharacter()
 {
@@ -16,8 +17,10 @@ AShooterCharacter::AShooterCharacter()
 	CameraBoom->bUsePawnControlRotation = true;	//Controller ne zaman dönerse CameraBoom da ona göre dönsün
 
 
+	/* FOLLOW CAMERA ADDING AND SETTINGS	*/
 
-
+	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
+	FollowCamera->SetupAttachment(CameraBoom);
 
 }
 

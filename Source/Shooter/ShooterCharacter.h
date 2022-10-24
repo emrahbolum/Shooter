@@ -32,12 +32,22 @@ private:
 	/*Heryerde gözüksün, blueprintten ulaþýlabilsin ama deðiþtirilmesin, 
 	kategori kamera olsun, özel (private) tanýmladýðýmýz için bu keywordu
 	yazmamýz gerekiyor. yoksa kabul etmezdi*/
+
+	// CAMERA SPRING ARM
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class USpringArmComponent* CameraBoom;
+
+	//FOLLOW CAMERA
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	class UCameraComponent* FollowCamera;
 
 public:
 	//GET CAMERABOOM
 	FORCEINLINE USpringArmComponent* GetCameraBoom() const { return CameraBoom; }		
+
+	//GET FOLLOWCAMERA
+	FORCEINLINE UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 	//herhangi bir deðer deðiþtirmediðimiz için const yaptýk
 	//Forceinline dediðimizde sadece >>return CameraBoom<< kýsmýný derlemeye çalýþacak
 
