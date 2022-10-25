@@ -20,8 +20,9 @@ AShooterCharacter::AShooterCharacter()
 	/* FOLLOW CAMERA ADDING AND SETTINGS	*/
 
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
-	FollowCamera->SetupAttachment(CameraBoom);
-
+	FollowCamera->SetupAttachment(CameraBoom,USpringArmComponent::SocketName);	//Kamera, cameraboomun önünde varsayýlan sokete entegre ediliyor 
+	FollowCamera->bUsePawnControlRotation = false; //Kamera yaylý kola göre dönmesin (Kamera sadece camerabooma göre hareket etsin.
+	//CTRL + SHIFT + SPACE 
 }
 
 // Called when the game starts or when spawned
@@ -29,6 +30,42 @@ void AShooterCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	//OutputLog();
+}
+
+void AShooterCharacter::MoveForward(float Value)
+{
+	if (Controller != nullptr && Value!=0.f) //Controller geçerli ise (posses ise) ve tuþa basýlý ise
+	{
+		//Önce yönümüzü belirliyoruz
+		const FRotator Rotation{ GetControlRotation() };	//Mevcut yönümüz
+		const FRotator YawRotation{ 0.0f,Rotation.Yaw,0.0f };	// Sadece yanal dönüþleri almak istiyoruz
+
+		//Aþaðýdaki iþlem yaw rotation a bakarak x ekseni doðrultusunda bir vektör oluþturuyor
+		const FVector Direction{ FRotationMatrix{YawRotation}.GetUnitAxis(EAxis::X) };
+
+		//Þimdi hareketi veriyoruz
+		AddMovementInput(Direction, Value);
+
+
+	}
+}
+
+void AShooterCharacter::MoveRight(float Value)
+{
+	if (Controller != nullptr && Value != 0.f) //Controller geçerli ise (posses ise) ve tuþa basýlý ise
+	{
+		//Önce yönümüzü belirliyoruz
+		const FRotator Rotation{ GetControlRotation() };	//Mevcut yönümüz
+		const FRotator YawRotation{ 0.0f,Rotation.Yaw,0.0f };	// Sadece yanal dönüþleri almak istiyoruz
+
+		//Aþaðýdaki iþlem yaw rotation a bakarak y ekseni doðrultusunda bir vektör oluþturuyor
+		const FVector Direction{ FRotationMatrix{YawRotation}.GetUnitAxis(EAxis::Y) };
+
+		//Þimdi hareketi veriyoruz
+		AddMovementInput(Direction, Value);
+
+
+	}
 }
 
 // Called every frame
@@ -42,7 +79,9 @@ void AShooterCharacter::Tick(float DeltaTime)
 void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
+	check(PlayerInputComponent);	//Bu makro playerinputcomponent geçerli deðilse aþaðý kodlarý çaðýrmaz
+	PlayerInputComponent->BindAxis("MoveForward", this, &AShooterCharacter::MoveForward);
+	PlayerInputComponent->BindAxis("MoveRight", this, &AShooterCharacter::MoveRight);
 }
 
 void AShooterCharacter::OutputLog()
