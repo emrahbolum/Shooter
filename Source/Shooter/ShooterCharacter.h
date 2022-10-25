@@ -23,6 +23,8 @@ protected:
 	void MoveForward(float Value);
 	void MoveRight(float Value);
 
+	void TurnAtRate(float Rate); //Dönüþ Mouse
+	void LookUpAtRate(float Rate);	
 
 public:	
 	// Called every frame
@@ -32,6 +34,7 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	void OutputLog();
+
 
 private:
 	/*Heryerde gözüksün, blueprintten ulaþýlabilsin ama deðiþtirilmesin, 
@@ -46,6 +49,12 @@ private:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* FollowCamera;
+
+	//Mouse hassaslýðý TEMEL DÖNÜÞ ORANI saniye/derece
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	float BaseTurnRate;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	float BaseLookUpRate;
 
 public:
 	//GET CAMERABOOM
