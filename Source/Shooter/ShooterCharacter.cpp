@@ -4,6 +4,7 @@
 #include "ShooterCharacter.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 // Sets default values
 AShooterCharacter::AShooterCharacter():
 	BaseTurnRate(45.f),
@@ -25,6 +26,18 @@ AShooterCharacter::AShooterCharacter():
 	FollowCamera->SetupAttachment(CameraBoom,USpringArmComponent::SocketName);	//Kamera, cameraboomun önünde varsayýlan sokete entegre ediliyor 
 	FollowCamera->bUsePawnControlRotation = false; //Kamera yaylý kola göre dönmesin (Kamera sadece camerabooma göre hareket etsin.
 	//CTRL + SHIFT + SPACE 
+
+	/*CONTROLLER DONERKEN MESH DONMESIN SADECE KAMERA DONSUN*/
+	bUseControllerRotationPitch = false;	//Mesh için kontrollerin dikey (evet hayýr) dönüþünü önemseme
+	bUseControllerRotationYaw = false;	//Mesh için kontrollerin yatay(döner koltuk) dönüþünü önemseme
+	bUseControllerRotationRoll = false;	//Mesh için kontrollerin yatay (yana düþüþ) dönüþünü önemseme
+
+	/*CHARACTER MOVEMENT SETTINGS*/
+	GetCharacterMovement()->bOrientRotationToMovement = true; //Karakter girdi yönüne göre hareket edecek. Hangi yöne basýlýrsa o tarafa doðru dönmüþ olacak.
+	GetCharacterMovement()->RotationRate = FRotator(0.f, 540.f, 0.f);	//Yanal (yaw= döner koltuk) dönme hýzý
+	GetCharacterMovement()->JumpZVelocity = 600.f; //Karakter zýplama hýzý
+	GetCharacterMovement()->AirControl = 0.2f;	//Karakter havadayken %20 kontrol edilebilir.
+
 }
 
 // Called when the game starts or when spawned
