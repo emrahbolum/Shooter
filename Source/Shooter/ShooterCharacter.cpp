@@ -7,6 +7,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Sound/SoundCue.h"
+#include "Engine/SkeletalMeshSocket.h"
 // Sets default values
 AShooterCharacter::AShooterCharacter():
 	BaseTurnRate(45.f),
@@ -163,5 +164,14 @@ void AShooterCharacter::FireWeapon()
 		//Gameplay statics için: #include "Kismet/GameplayStatics.h"
 		UGameplayStatics::PlaySound2D(this,FireSound);
 		//FireSound için de include etmemiz gerekiyor #include "Sound/SoundCue.h"
+	}
+	if (MuzzleFlash)
+	{
+		const USkeletalMeshSocket* BarrelSocket = GetMesh()->GetSocketByName("BarrelSocket");
+		if (BarrelSocket)
+		{
+			const FTransform SocketTransform = BarrelSocket->GetSocketTransform(GetMesh()); //#include "Engine/SkeletalMeshSocket.h" ekle
+			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), MuzzleFlash, SocketTransform);		//Parçacýk sistemi yumurtla
+		}
 	}
 }

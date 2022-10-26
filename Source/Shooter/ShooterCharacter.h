@@ -59,6 +59,10 @@ private:
 	//SOUND CUE
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))
 	class USoundCue* FireSound;
+
+	//MUZZLE FLASH
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))
+	class UParticleSystem* MuzzleFlash;
 	/*ATES ETME MOUSE SOL CLICK*/
 	void FireWeapon();
 public:
