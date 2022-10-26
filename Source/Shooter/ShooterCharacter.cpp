@@ -114,6 +114,7 @@ void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 	PlayerInputComponent->BindAction("Jump", EInputEvent::IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction("Jump", EInputEvent::IE_Released, this, &ACharacter::StopJumping);
+	PlayerInputComponent->BindAction("FireButton", EInputEvent::IE_Pressed, this, &AShooterCharacter::FireWeapon);
 }
 
 void AShooterCharacter::OutputLog()
@@ -149,4 +150,14 @@ void AShooterCharacter::OutputLog()
 
 	UE_LOG(LogTemp, Warning, TEXT("FString value: %s"), *MyString); // %s ile gösterilir. FStringte aþýrý yükleme olduðu için baþa * iþareti koyuyoruz.
 	UE_LOG(LogTemp, Warning, TEXT("GetName Islemi: %s"), *GetName());
+}
+
+void AShooterCharacter::FireWeapon()
+{
+	//UE_LOG(LogTemp, Warning, TEXT("Fire Weapon"))
+
+	if (FireSound)
+	{
+
+	}
 }

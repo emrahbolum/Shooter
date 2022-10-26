@@ -56,6 +56,11 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	float BaseLookUpRate;
 
+	//SOUND CUE
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))
+	class USoundCue* FireSound;
+	/*ATES ETME MOUSE SOL CLICK*/
+	void FireWeapon();
 public:
 	//GET CAMERABOOM
 	FORCEINLINE USpringArmComponent* GetCameraBoom() const { return CameraBoom; }		
