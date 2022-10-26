@@ -174,4 +174,14 @@ void AShooterCharacter::FireWeapon()
 			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), MuzzleFlash, SocketTransform);		//Parçacýk sistemi yumurtla
 		}
 	}
+
+	//Montaj oynatmak için AnimIntance e ihtiyacýmýz var. Bunu meshten çekebiliriz.
+
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	if (AnimInstance && HipFireMontage)
+	{
+		AnimInstance->Montage_Play(HipFireMontage);	//Burada montajý çaðýrýyoruz.
+		AnimInstance->Montage_JumpToSection(FName("StartFire"));
+	}
+
 }

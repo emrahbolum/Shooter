@@ -63,6 +63,14 @@ private:
 	//MUZZLE FLASH
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))
 	class UParticleSystem* MuzzleFlash;
+
+	//MONTAGE 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))
+	class UAnimMontage* HipFireMontage;
+
+
+
+
 	/*ATES ETME MOUSE SOL CLICK*/
 	void FireWeapon();
 public:
