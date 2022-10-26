@@ -5,6 +5,8 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/GameplayStatics.h"
+#include "Sound/SoundCue.h"
 // Sets default values
 AShooterCharacter::AShooterCharacter():
 	BaseTurnRate(45.f),
@@ -158,6 +160,8 @@ void AShooterCharacter::FireWeapon()
 
 	if (FireSound)
 	{
-
+		//Gameplay statics için: #include "Kismet/GameplayStatics.h"
+		UGameplayStatics::PlaySound2D(this,FireSound);
+		//FireSound için de include etmemiz gerekiyor #include "Sound/SoundCue.h"
 	}
 }
