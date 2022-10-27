@@ -23,7 +23,7 @@ AShooterCharacter::AShooterCharacter():
 	CameraBoom->SetupAttachment(RootComponent);  //"GameFramework/SpringArmComponent.h"
 	CameraBoom->TargetArmLength = 300.f;	//Yay kolu uzunluðu (karakterin arkasýnda mesafe )
 	CameraBoom->bUsePawnControlRotation = true;	//Controller ne zaman dönerse CameraBoom da ona göre dönsün
-	CameraBoom->SocketOffset = FVector(0.f, 50.f, 50.f);	//Cameranýn 50 birim yukarida ve 50 sagda olmasini sagliyoruz
+	CameraBoom->SocketOffset = FVector(0.f, 50.f, 50.f);
 
 	/* FOLLOW CAMERA ADDING AND SETTINGS	*/
 
