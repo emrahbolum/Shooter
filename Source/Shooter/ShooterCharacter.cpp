@@ -8,6 +8,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Sound/SoundCue.h"
 #include "Engine/SkeletalMeshSocket.h"
+#include "DrawDebugHelpers.h"
 // Sets default values
 AShooterCharacter::AShooterCharacter():
 	BaseTurnRate(45.f),
@@ -172,6 +173,29 @@ void AShooterCharacter::FireWeapon()
 		{
 			const FTransform SocketTransform = BarrelSocket->GetSocketTransform(GetMesh()); //#include "Engine/SkeletalMeshSocket.h" ekle
 			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), MuzzleFlash, SocketTransform);		//Parçacýk sistemi yumurtla
+
+			/*LINE TRACE BY SINGLE CHANNEL*/
+
+			FHitResult FireHit;
+			const FVector Start{ SocketTransform.GetLocation() };	//Socketin konumunu alýyoruz
+			const FQuat Rotation{ SocketTransform.GetRotation() };	//Normalde Rotation olarak tanýmlamamýzý beklesek de socketlere özgü bir þekilde FQuat tanýmlanýyor
+			// FQuat Quaternion denen matematiksel bir kavramdýr ve rotasyondan haric bilgiler de tutar. Bir vektorun ayrica dogrultu ve donus bilgileri >>AYRICA<< bakilacak.
+			const FVector RotationAxis{ Rotation.GetAxisX() };		//Rotation'ýn vektörlere böler ve x,y ve z dogrultularini cikarir.
+			//yukaridaki islemler aslinda soketin x dogrultusunu ogrenmek icin
+			const FVector End{ Start + RotationAxis * 50'000.f };	//Bu baslangic noktasindan rotationaxis*50k dogrultusunda bir vector cizecek
+			/*Matematiksel olarak Vector A + Vector B bileske vektoru cikariyor. Onun icin RotationAxis*50k ve Start vectorunu topladik*/
+			//yukaridaki kesme isareti yok sayilir sadece daha okunabilir sayilar icin kullanilmaktadir.
+
+
+			/*HitResult const olmadýðý için deðiþtirilebilir*/
+			GetWorld()->LineTraceSingleByChannel(FireHit,Start,End,ECollisionChannel::ECC_Visibility);
+
+			if (FireHit.bBlockingHit)	//bir seye çaprti mi?
+			{
+				//#include "DrawDebugHelpers.h"
+				DrawDebugLine(GetWorld(), Start, End, FColor::Red, false, 2.0f);						//Debug Line cizimi
+				DrawDebugPoint(GetWorld(), FireHit.Location, 5.0f, FColor::Green, false, 3.0f);			//Debug kuresi cizimi
+			}
 		}
 	}
 
