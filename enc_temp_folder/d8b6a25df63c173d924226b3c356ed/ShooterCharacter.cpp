@@ -9,7 +9,6 @@
 #include "Sound/SoundCue.h"
 #include "Engine/SkeletalMeshSocket.h"
 #include "DrawDebugHelpers.h"
-#include "Particles/ParticleSystemComponent.h"
 // Sets default values
 AShooterCharacter::AShooterCharacter():
 	BaseTurnRate(45.f),
@@ -187,36 +186,20 @@ void AShooterCharacter::FireWeapon()
 			/*Matematiksel olarak Vector A + Vector B bileske vektoru cikariyor. Onun icin RotationAxis*50k ve Start vectorunu topladik*/
 			//yukaridaki kesme isareti yok sayilir sadece daha okunabilir sayilar icin kullanilmaktadir.
 
-			FVector BeamEndPoint{ End };	//Hicbir seye carpmazsa varsayilan olarak bitis noktasinda olacak duman efekti
-
 
 			/*HitResult const olmadýðý için deðiþtirilebilir*/
 			GetWorld()->LineTraceSingleByChannel(FireHit,Start,End,ECollisionChannel::ECC_Visibility);
 
-
 			if (FireHit.bBlockingHit)	//bir seye çaprti mi?
 			{
 				//#include "DrawDebugHelpers.h"
-				//DrawDebugLine(GetWorld(), Start, End, FColor::Red, false, 2.0f);						//Debug Line cizimi
-				//DrawDebugPoint(GetWorld(), FireHit.Location, 5.0f, FColor::Green, false, 3.0f);			//Debug kuresi cizimi
-
-				BeamEndPoint = FireHit.Location;	//Carparsa bitis noktasi carpisma noktasi olacak.
+				DrawDebugLine(GetWorld(), Start, End, FColor::Red, false, 2.0f);						//Debug Line cizimi
+				DrawDebugPoint(GetWorld(), FireHit.Location, 5.0f, FColor::Green, false, 3.0f);			//Debug kuresi cizimi
 
 				//Impact Particle MERMI TEMAS EFEKTI
 				if (ImpactParticles)
 				{
 					UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactParticles, FireHit.Location, FRotator(0.f), true);
-				}
-			}
-
-			if (BeamParticles)
-			{
-				//Gecici bir efekt pointer olusturduk ve bunu spawn ettigimiz particle a iliskilendirmis olduk.
-				UParticleSystemComponent* Beam = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), BeamParticles, SocketTransform);
-
-				if (Beam)	//parcacik gecerli ise
-				{		//#include "Particles/ParticleSystemComponent.h"
-					Beam->SetVectorParameter(FName("Target"), BeamEndPoint);	//Bu parcacik sistemi parametre aliyor. Target parametresi bir vector deger aldigi icin vektor noktasi verdik.
 				}
 			}
 		}

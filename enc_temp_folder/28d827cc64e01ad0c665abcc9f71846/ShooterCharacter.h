@@ -72,10 +72,6 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))
 	UParticleSystem* ImpactParticles;
 
-	//BEAM PARTICLES mermiler icin duman izi efekti
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))
-	UParticleSystem* BeamParticles;
-
 
 	/*ATES ETME MOUSE SOL CLICK*/
 	void FireWeapon();
