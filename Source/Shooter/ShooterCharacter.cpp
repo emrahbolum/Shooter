@@ -175,8 +175,65 @@ void AShooterCharacter::FireWeapon()
 			const FTransform SocketTransform = BarrelSocket->GetSocketTransform(GetMesh()); //#include "Engine/SkeletalMeshSocket.h" ekle
 			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), MuzzleFlash, SocketTransform);		//Parçacýk sistemi yumurtla
 
-			/*LINE TRACE BY SINGLE CHANNEL*/
+			//Ekranin ortasindan linetrace olusturma
+			FVector2D ViewportSize;
+			if (GEngine && GEngine->GameViewport)	//GEngine ve GameViewport gecerli ise
+			{
+				GEngine->GameViewport->GetViewportSize(ViewportSize);	//Ekran boyutunu ViewportSize vektorune atiyoruz.
+			}
 
+			FVector2D CrosshairLocation(ViewportSize.X / 2.0f, ViewportSize.Y / 2.0f);
+			CrosshairLocation.Y -= 50.f;
+
+
+			//CROSSHAIRIN DUNYA LOKASYONUNU ALIYORUZ
+			FVector CrosshairWorldPosition;
+			FVector CrosshairWorldDirection;
+
+			bool bScreenToWorld = UGameplayStatics::DeprojectScreenToWorld(
+				UGameplayStatics::GetPlayerController(this, 0), 
+				CrosshairLocation, 
+				CrosshairWorldPosition, 
+				CrosshairWorldDirection
+			);
+			//UGameplayStatics::GetPlayerController(this, 0)	bu zaten playercontroller donduruyor 0. oyuncu ve bu dunya dedik
+			if (bScreenToWorld)
+			{
+				FHitResult ScreenTraceHit;
+				const FVector Start{ CrosshairWorldPosition };
+				const FVector End{ CrosshairWorldPosition + CrosshairWorldDirection * 50'000.f };
+
+				//Duman efekti son noktasi
+				FVector BeamEndPoint{ End };
+				GetWorld()->LineTraceSingleByChannel(ScreenTraceHit, Start, End,ECollisionChannel::ECC_Visibility);
+				if (ScreenTraceHit.bBlockingHit)
+				{
+					BeamEndPoint = ScreenTraceHit.Location;		//Eger carparsa duman bitis noktasi carpisma noktasi olarak ayarlansin
+					if (ImpactParticles)
+					{
+						UGameplayStatics::SpawnEmitterAtLocation(
+							GetWorld(),
+							ImpactParticles,
+							ScreenTraceHit.Location
+						);
+
+					}
+					
+				}
+				if (BeamParticles)
+				{
+					//Gecici bir efekt pointer olusturduk ve bunu spawn ettigimiz particle a iliskilendirmis olduk.
+					UParticleSystemComponent* Beam = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), BeamParticles, SocketTransform);
+
+					if (Beam)	//parcacik gecerli ise
+					{		//#include "Particles/ParticleSystemComponent.h"
+						Beam->SetVectorParameter(FName("Target"), BeamEndPoint);	//Bu parcacik sistemi parametre aliyor. Target parametresi bir vector deger aldigi icin vektor noktasi verdik.
+					}
+				}
+			}
+
+			/*LINE TRACE BY SINGLE CHANNEL*/
+			/*
 			FHitResult FireHit;
 			const FVector Start{ SocketTransform.GetLocation() };	//Socketin konumunu alýyoruz
 			const FQuat Rotation{ SocketTransform.GetRotation() };	//Normalde Rotation olarak tanýmlamamýzý beklesek de socketlere özgü bir þekilde FQuat tanýmlanýyor
@@ -184,14 +241,14 @@ void AShooterCharacter::FireWeapon()
 			const FVector RotationAxis{ Rotation.GetAxisX() };		//Rotation'ýn vektörlere böler ve x,y ve z dogrultularini cikarir.
 			//yukaridaki islemler aslinda soketin x dogrultusunu ogrenmek icin
 			const FVector End{ Start + RotationAxis * 50'000.f };	//Bu baslangic noktasindan rotationaxis*50k dogrultusunda bir vector cizecek
-			/*Matematiksel olarak Vector A + Vector B bileske vektoru cikariyor. (Ucuca ekleme yontemi. Bakiniz: Fizik Vektorler... 
-			Onun icin RotationAxis*50k ve Start vectorunu topladik*/
+			//Matematiksel olarak Vector A + Vector B bileske vektoru cikariyor. (Ucuca ekleme yontemi. Bakiniz: Fizik Vektorler... 
+			//Onun icin RotationAxis*50k ve Start vectorunu topladik
 			//yukaridaki kesme isareti yok sayilir sadece daha okunabilir sayilar icin kullanilmaktadir.
 
 			FVector BeamEndPoint{ End };	//Hicbir seye carpmazsa varsayilan olarak bitis noktasinda olacak duman efekti
 
 
-			/*HitResult const olmadýðý için deðiþtirilebilir*/
+			//HitResult const olmadýðý için deðiþtirilebilir
 			GetWorld()->LineTraceSingleByChannel(FireHit,Start,End,ECollisionChannel::ECC_Visibility);
 
 
@@ -220,6 +277,7 @@ void AShooterCharacter::FireWeapon()
 					Beam->SetVectorParameter(FName("Target"), BeamEndPoint);	//Bu parcacik sistemi parametre aliyor. Target parametresi bir vector deger aldigi icin vektor noktasi verdik.
 				}
 			}
+			*/
 		}
 	}
 
