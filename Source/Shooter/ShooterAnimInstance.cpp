@@ -4,6 +4,7 @@
 #include "ShooterAnimInstance.h"
 #include "ShooterCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/KismetMathLibrary.h"
 void UShooterAnimInstance::UpdateAnimationProperties(float DeltaTime)
 {
 	//Karakter geçerli deðil ise
@@ -37,7 +38,26 @@ void UShooterAnimInstance::UpdateAnimationProperties(float DeltaTime)
 			bIsAccelerating = false;
 			//DÝPNOT: Normalde ivme 0 ken hýz 0 dan farklý olabilir. Ama burda kastedilen ivme karakterin hareket halinde olup olmadýðýdýr.	
 		}
+		//Bu hedeflenen yone karsilik gelen rotatoru veriyor 
+		FRotator AimRotation = ShooterCharacter->GetBaseAimRotation();	//Karakter hangi yone bakiyor?
+		//FString RotationMessage = FString::Printf(TEXT("Base Aim Rotation: %f"), AimRotation.Yaw); //Karakterin yanal bakis yonu
 		
+		//Karakterin hareket sirasindaki yonu (tam sag 90, tam sol -90, ileri0, geri 180) x yonunde 
+		FRotator MovementRotation = UKismetMathLibrary::MakeRotFromX(ShooterCharacter->GetVelocity());//#include "Kismet/KismetMathLibrary.h"
+		//Yukaridaki kod karakterin dunya x konumuna gore yonunu veriyor
+		//FString MovementRotationMessage = FString::Printf(TEXT("Movement Rotation: %f"), MovementRotation.Yaw);
+
+		MovementOffsetYaw = UKismetMathLibrary::NormalizedDeltaRotator(MovementRotation, AimRotation).Yaw;	//Bu float dondurdugu icin sadece yaw degerini aldik
+		//Yukaridaki kod iki rotator arasindaki farki alir
+
+		FString OffsetMessage = FString::Printf(TEXT("MovementOffsetYaw: %f"), MovementOffsetYaw);
+		
+		//PrintScreen kod tarafinda bu sekilde:
+		if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(1, 0.f, FColor::Red, OffsetMessage);
+
+		}
 	}
 }
 

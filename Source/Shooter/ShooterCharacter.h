@@ -79,6 +79,9 @@ private:
 
 	/*ATES ETME MOUSE SOL CLICK*/
 	void FireWeapon();
+
+	/*PARCACIK KONUMU AL*/
+	bool GetBeamEndLocation(const FVector& MuzzleSocketLocation, FVector& OutBeamLocation);
 public:
 	//GET CAMERABOOM
 	FORCEINLINE USpringArmComponent* GetCameraBoom() const { return CameraBoom; }		

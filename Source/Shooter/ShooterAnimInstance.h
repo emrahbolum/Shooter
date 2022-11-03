@@ -33,4 +33,7 @@ private:
 	bool bIsInAir;	//Havada mý?
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
 	bool bIsAccelerating;	//Karakter hareket halinde mi?
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
+	float MovementOffsetYaw;	//karakterin baktigi yon ve hareket halindeki yonun farkinin yanal degeri..
+
 };

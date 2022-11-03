@@ -175,62 +175,31 @@ void AShooterCharacter::FireWeapon()
 			const FTransform SocketTransform = BarrelSocket->GetSocketTransform(GetMesh()); //#include "Engine/SkeletalMeshSocket.h" ekle
 			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), MuzzleFlash, SocketTransform);		//Parçacýk sistemi yumurtla
 
-			//Ekranin ortasindan linetrace olusturma
-			FVector2D ViewportSize;
-			if (GEngine && GEngine->GameViewport)	//GEngine ve GameViewport gecerli ise
+			FVector BeamEnd;
+			bool bBeamEnd = GetBeamEndLocation(SocketTransform.GetLocation(), BeamEnd);
+			if (bBeamEnd)
 			{
-				GEngine->GameViewport->GetViewportSize(ViewportSize);	//Ekran boyutunu ViewportSize vektorune atiyoruz.
+				if (ImpactParticles)
+				{
+					UGameplayStatics::SpawnEmitterAtLocation(
+						GetWorld(),
+						ImpactParticles,
+						BeamEnd
+					);
+				}
+				UParticleSystemComponent* Beam = UGameplayStatics::SpawnEmitterAtLocation(
+					GetWorld(),
+					BeamParticles,
+					SocketTransform
+				);
+				if (Beam)
+				{
+					Beam->SetVectorParameter(FName("Target"), BeamEnd);
+				}
 			}
 
-			FVector2D CrosshairLocation(ViewportSize.X / 2.0f, ViewportSize.Y / 2.0f);
-			CrosshairLocation.Y -= 50.f;
-
-
-			//CROSSHAIRIN DUNYA LOKASYONUNU ALIYORUZ
-			FVector CrosshairWorldPosition;
-			FVector CrosshairWorldDirection;
-
-			bool bScreenToWorld = UGameplayStatics::DeprojectScreenToWorld(
-				UGameplayStatics::GetPlayerController(this, 0), 
-				CrosshairLocation, 
-				CrosshairWorldPosition, 
-				CrosshairWorldDirection
-			);
 			//UGameplayStatics::GetPlayerController(this, 0)	bu zaten playercontroller donduruyor 0. oyuncu ve bu dunya dedik
-			if (bScreenToWorld)
-			{
-				FHitResult ScreenTraceHit;
-				const FVector Start{ CrosshairWorldPosition };
-				const FVector End{ CrosshairWorldPosition + CrosshairWorldDirection * 50'000.f };
-
-				//Duman efekti son noktasi
-				FVector BeamEndPoint{ End };
-				GetWorld()->LineTraceSingleByChannel(ScreenTraceHit, Start, End,ECollisionChannel::ECC_Visibility);
-				if (ScreenTraceHit.bBlockingHit)
-				{
-					BeamEndPoint = ScreenTraceHit.Location;		//Eger carparsa duman bitis noktasi carpisma noktasi olarak ayarlansin
-					if (ImpactParticles)
-					{
-						UGameplayStatics::SpawnEmitterAtLocation(
-							GetWorld(),
-							ImpactParticles,
-							ScreenTraceHit.Location
-						);
-
-					}
-					
-				}
-				if (BeamParticles)
-				{
-					//Gecici bir efekt pointer olusturduk ve bunu spawn ettigimiz particle a iliskilendirmis olduk.
-					UParticleSystemComponent* Beam = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), BeamParticles, SocketTransform);
-
-					if (Beam)	//parcacik gecerli ise
-					{		//#include "Particles/ParticleSystemComponent.h"
-						Beam->SetVectorParameter(FName("Target"), BeamEndPoint);	//Bu parcacik sistemi parametre aliyor. Target parametresi bir vector deger aldigi icin vektor noktasi verdik.
-					}
-				}
-			}
+			
 
 			/*LINE TRACE BY SINGLE CHANNEL*/
 			/*
@@ -290,4 +259,62 @@ void AShooterCharacter::FireWeapon()
 		AnimInstance->Montage_JumpToSection(FName("StartFire"));
 	}
 
+}
+
+bool AShooterCharacter::GetBeamEndLocation(const FVector& MuzzleSocketLocation, FVector& OutBeamLocation)
+{
+	//Ekranin ortasindan linetrace olusturma
+	FVector2D ViewportSize;
+	if (GEngine && GEngine->GameViewport)	//GEngine ve GameViewport gecerli ise
+	{
+		GEngine->GameViewport->GetViewportSize(ViewportSize);	//Ekran boyutunu ViewportSize vektorune atiyoruz.
+	}
+
+	FVector2D CrosshairLocation(ViewportSize.X / 2.0f, ViewportSize.Y / 2.0f);		//Ekran boyutunun ortasini aliyoruz
+	CrosshairLocation.Y -= 50.f;			//Burada ekran ortasinin 50 birim ustunu hedef almistik
+
+
+	//CROSSHAIRIN DUNYA LOKASYONUNU ALIYORUZ
+	FVector CrosshairWorldPosition;
+	FVector CrosshairWorldDirection;
+
+	bool bScreenToWorld = UGameplayStatics::DeprojectScreenToWorld(
+		UGameplayStatics::GetPlayerController(this, 0),
+		CrosshairLocation,
+		CrosshairWorldPosition,
+		CrosshairWorldDirection
+	);
+
+	if (bScreenToWorld)
+	{
+		FHitResult ScreenTraceHit;
+		const FVector Start{ CrosshairWorldPosition };
+		const FVector End{ CrosshairWorldPosition + CrosshairWorldDirection * 50'000.f };
+
+		//Duman efekti son noktasi
+		
+		OutBeamLocation = End;
+
+		GetWorld()->LineTraceSingleByChannel(ScreenTraceHit, Start, End, ECollisionChannel::ECC_Visibility);
+		if (ScreenTraceHit.bBlockingHit)
+		{
+			OutBeamLocation = ScreenTraceHit.Location;		//Eger carparsa duman bitis noktasi carpisma noktasi olarak ayarlansin
+
+
+		}
+		//Burada ekran ortasindan bir trace cizdigimiz icin silah namlusu ve crosshair arasinda bir nesne varsa o nesneye carpsa bile duman efekti devam ediyor
+		//bunu bir trace daha cizerek halledebiliriz.
+		FHitResult WeaponTraceHit;
+		const FVector WeaponTraceStart{ MuzzleSocketLocation };
+		const FVector WeaponTraceEnd{ OutBeamLocation };
+		GetWorld()->LineTraceSingleByChannel(WeaponTraceHit, WeaponTraceStart, WeaponTraceEnd, ECollisionChannel::ECC_Visibility);
+		if (WeaponTraceHit.bBlockingHit)	//Eger silah namlusu ve crosshair arasinda bir carpisma varsa
+		{
+			OutBeamLocation = WeaponTraceHit.Location;
+		}
+
+		return true;
+	}
+
+	return false;
 }
