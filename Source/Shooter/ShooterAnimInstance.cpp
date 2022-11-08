@@ -53,6 +53,7 @@ void UShooterAnimInstance::UpdateAnimationProperties(float DeltaTime)
 		if (ShooterCharacter->GetVelocity().Size() > 0.f)
 		{
 			LastMovementOffsetYaw = MovementOffsetYaw;
+			//Durmadan onceki son durumunu aliyoruz. Durduktan sonra zaten 0 oldugu icin ihtiyacimiz yok.
 		}
 		FString OffsetMessage = FString::Printf(TEXT("MovementOffsetYaw: %f"), MovementOffsetYaw);
 		
