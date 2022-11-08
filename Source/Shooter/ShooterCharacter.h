@@ -91,6 +91,16 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))
 	bool bAiming;
 
+	//Gecerli kamera yakinligi
+	float CameraCurrentFOV;
+
+	//Kamera zoom enterpolasyon hizi
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))
+		float ZoomInterpSpeed;
+
+	//event tick icin kameara enterpolasyon 
+	void CameraInterpZoom(float DeltaTime);
+
 	/* Kamera varsayilan yakinlasma degeri*/
 	float CameraDefaultFOV;
 	/* Kamera zoomlu yakinlastirma degeri*/

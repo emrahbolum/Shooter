@@ -16,7 +16,9 @@ AShooterCharacter::AShooterCharacter():
 	BaseLookUpRate(45.f),
 	bAiming(false),
 	CameraDefaultFOV(0.f),
-	CameraZoomedFOV(60.f)
+	CameraZoomedFOV(35.f),
+	ZoomInterpSpeed(30.f),
+	CameraCurrentFOV(0.f)
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -24,9 +26,9 @@ AShooterCharacter::AShooterCharacter():
 	/* CAMERA BOOM ADDING AND SETTINGS	*/
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(RootComponent);  //"GameFramework/SpringArmComponent.h"
-	CameraBoom->TargetArmLength = 300.f;	//Yay kolu uzunluðu (karakterin arkasýnda mesafe )
+	CameraBoom->TargetArmLength = 180.f;	//Yay kolu uzunluðu (karakterin arkasýnda mesafe )
 	CameraBoom->bUsePawnControlRotation = true;	//Controller ne zaman dönerse CameraBoom da ona göre dönsün
-	CameraBoom->SocketOffset = FVector(0.f, 50.f, 50.f);	//Cameranýn 50 birim yukarida ve 50 sagda olmasini sagliyoruz
+	CameraBoom->SocketOffset = FVector(0.f, 50.f, 70.f);	//Cameranýn 50 birim yukarida ve 70 sagda olmasini sagliyoruz
 
 	/* FOLLOW CAMERA ADDING AND SETTINGS	*/
 
@@ -57,6 +59,8 @@ void AShooterCharacter::BeginPlay()
 	if (FollowCamera)
 	{
 		CameraDefaultFOV = GetFollowCamera()->FieldOfView;	//Kameranin varsayilan view ini getir ve defaultfov a ekle
+		CameraCurrentFOV = CameraDefaultFOV;
+		CameraCurrentFOV = CameraDefaultFOV;
 	}
 }
 
@@ -110,22 +114,19 @@ void AShooterCharacter::LookUpAtRate(float Rate)
 void AShooterCharacter::AimingButtonPressed()
 {
 	bAiming = true;
-	GetFollowCamera()->SetFieldOfView(CameraZoomedFOV);
 }
 
 void AShooterCharacter::AimingButtonReleased()
 {
 	bAiming = false; 
-	GetFollowCamera()->SetFieldOfView(CameraDefaultFOV);
 }
 
 // Called every frame
 void AShooterCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	CameraInterpZoom(DeltaTime);
 }
-
 // Called to bind functionality to input
 void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
@@ -340,3 +341,19 @@ bool AShooterCharacter::GetBeamEndLocation(const FVector& MuzzleSocketLocation, 
 
 	return false;
 }
+
+void AShooterCharacter::CameraInterpZoom(float DeltaTime)
+{
+	if (bAiming)
+	{	//Kamera'ya enterpolasyon uyguluyoruz YAKINLASIR
+		CameraCurrentFOV = FMath::FInterpTo(CameraCurrentFOV, CameraZoomedFOV, DeltaTime, ZoomInterpSpeed);
+	}
+	else
+	{	//Kamera'ya enterpolasyon uyguluyoruz UZAKLASIR
+		CameraCurrentFOV = FMath::FInterpTo(CameraCurrentFOV, CameraDefaultFOV, DeltaTime, ZoomInterpSpeed);
+	}
+
+	GetFollowCamera()->SetFieldOfView(CameraCurrentFOV);	//kamera mesafesine uyarliyoruz
+}
+
+
