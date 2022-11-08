@@ -49,7 +49,11 @@ void UShooterAnimInstance::UpdateAnimationProperties(float DeltaTime)
 
 		MovementOffsetYaw = UKismetMathLibrary::NormalizedDeltaRotator(MovementRotation, AimRotation).Yaw;	//Bu float dondurdugu icin sadece yaw degerini aldik
 		//Yukaridaki kod iki rotator arasindaki farki alir
-
+		
+		if (ShooterCharacter->GetVelocity().Size() > 0.f)
+		{
+			LastMovementOffsetYaw = MovementOffsetYaw;
+		}
 		FString OffsetMessage = FString::Printf(TEXT("MovementOffsetYaw: %f"), MovementOffsetYaw);
 		
 		//PrintScreen kod tarafinda bu sekilde:

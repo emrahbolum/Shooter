@@ -35,5 +35,6 @@ private:
 	bool bIsAccelerating;	//Karakter hareket halinde mi?
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
 	float MovementOffsetYaw;	//karakterin baktigi yon ve hareket halindeki yonun farkinin yanal degeri..
-
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
+	float LastMovementOffsetYaw;	// durmadan onceki son pozisyon degeri
 };
