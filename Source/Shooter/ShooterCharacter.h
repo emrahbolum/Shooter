@@ -26,6 +26,10 @@ protected:
 	void TurnAtRate(float Rate); //Dönüþ Mouse
 	void LookUpAtRate(float Rate);	
 
+	//SAG MOUSE (ZOOM) TIKLI MI?
+	void AimingButtonPressed();
+	void AimingButtonReleased();
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -82,6 +86,15 @@ private:
 
 	/*PARCACIK KONUMU AL*/
 	bool GetBeamEndLocation(const FVector& MuzzleSocketLocation, FVector& OutBeamLocation);
+	
+	/*ZOOM YAPMIS MI*/
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))
+	bool bAiming;
+
+	/* Kamera varsayilan yakinlasma degeri*/
+	float CameraDefaultFOV;
+	/* Kamera zoomlu yakinlastirma degeri*/
+	float CameraZoomedFOV;
 public:
 	//GET CAMERABOOM
 	FORCEINLINE USpringArmComponent* GetCameraBoom() const { return CameraBoom; }		
