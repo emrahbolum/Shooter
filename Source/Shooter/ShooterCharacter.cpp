@@ -407,4 +407,16 @@ void AShooterCharacter::SetLookRates(float DeltaTime)
 	}
 }
 
+void AShooterCharacter::CalculateCrosshairSpread(float DeltaTime)
+{
+	FVector2D WalkSpeedRange{ 0.f,600.f };	//Karakter hizimizi temsil ediyor
+	FVector2D VelocityMultiplierRange{ 0.f,1.f };	//Karakterin hizini ayarlamak istedigimiz deger
+	FVector Velocity{ GetVelocity() };	//Karakterin hizi
+	Velocity.Z = 0.f;		//Karakterin sadece yanal hizini onemsiyoruz. Z degeri bizim icin onemli degil
+	CrosshairVelocityFactor = FMath::GetMappedRangeValueClamped(WalkSpeedRange, VelocityMultiplierRange, Velocity.Size());
+	//velocity.size degerini walkspeedrange'e yaklasik olarak gelecek degeri, velocitymultiplierrange degerlerine donusturecek
+	//yani 0 ve 600 arasindaki gelen degeri, 0 ve 1 arasina cekecek.
+	CrosshairSpreadMultiplier = 0.5 + CrosshairVelocityFactor;
+}
+
 

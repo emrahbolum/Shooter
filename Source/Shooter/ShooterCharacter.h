@@ -123,12 +123,27 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))
 		float ZoomInterpSpeed;
 
+	//Crosshair yayilma hizi icin degiskenler
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Crosshairs, meta = (AllowPrivateAccess = "true"))
+	float CrosshairSpreadMultiplier;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Crosshairs, meta = (AllowPrivateAccess = "true"))
+	float CrosshairVelocityFactor;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Crosshairs, meta = (AllowPrivateAccess = "true"))
+	float CrosshairInAirFactor;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Crosshairs, meta = (AllowPrivateAccess = "true"))
+	float CrossairAimFactor;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Crosshairs, meta = (AllowPrivateAccess = "true"))
+	float CrossairShootingFactor;
+
+
+
 	//event tick icin kamera enterpolasyonu ve donusoranlari ayarlama 
 	void CameraInterpZoom(float DeltaTime);
 	void SetLookRates(float DeltaTime);
 
 
-	
+	//event tick icin crosshair degerlerini atama
+	void CalculateCrosshairSpread(float DeltaTime);
 
 
 
