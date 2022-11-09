@@ -55,14 +55,17 @@ void UShooterAnimInstance::UpdateAnimationProperties(float DeltaTime)
 			LastMovementOffsetYaw = MovementOffsetYaw;
 			//Durmadan onceki son durumunu aliyoruz. Durduktan sonra zaten 0 oldugu icin ihtiyacimiz yok.
 		}
-		FString OffsetMessage = FString::Printf(TEXT("MovementOffsetYaw: %f"), MovementOffsetYaw);
+
+		bAiming=ShooterCharacter->GetAiming();
+
+		//FString OffsetMessage = FString::Printf(TEXT("MovementOffsetYaw: %f"), MovementOffsetYaw);
 		
 		//PrintScreen kod tarafinda bu sekilde:
-		if (GEngine)
+		/*if (GEngine)
 		{
 			GEngine->AddOnScreenDebugMessage(1, 0.f, FColor::Red, OffsetMessage);
 
-		}
+		}*/
 	}
 }
 

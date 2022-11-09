@@ -26,6 +26,10 @@ protected:
 	void TurnAtRate(float Rate); //Dönüþ Mouse
 	void LookUpAtRate(float Rate);	
 
+	void Turn(float Value);
+	void LookUp(float Value);
+
+
 	//SAG MOUSE (ZOOM) TIKLI MI?
 	void AimingButtonPressed();
 	void AimingButtonReleased();
@@ -59,6 +63,27 @@ private:
 	float BaseTurnRate;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	float BaseLookUpRate;
+
+	/*Aiming sirasinda mouse hassasiyet icin yeni degiskenler*/
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	float HipTurnRate;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	float HipLookUpRate;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	float AimingTurnRate;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	float AimingLookUpRate;
+
+	/*Mouse hassasiyet degiskenleri*/
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Mouse, meta = (AllowPrivateAccess = "true", ClampMin="0.0", ClampMax="1.0",UIMin="0.0", UIMax="1.0"))
+	float MouseHipTurnRate;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Mouse, meta = (AllowPrivateAccess = "true", ClampMin = "0.0", ClampMax = "1.0", UIMin = "0.0", UIMax = "1.0"))
+	float MouseHipLookUpRate;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Mouse, meta = (AllowPrivateAccess = "true", ClampMin = "0.0", ClampMax = "1.0", UIMin = "0.0", UIMax = "1.0"))
+	float MouseAimingTurnRate;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Mouse, meta = (AllowPrivateAccess = "true", ClampMin = "0.0", ClampMax = "1.0", UIMin = "0.0", UIMax = "1.0"))
+	float MouseAimingLookUpRate;
+
 
 	//SOUND CUE		Silah Mermi random cue 10 ses dosyasindan olustu
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))
@@ -98,8 +123,14 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))
 		float ZoomInterpSpeed;
 
-	//event tick icin kameara enterpolasyon 
+	//event tick icin kamera enterpolasyonu ve donusoranlari ayarlama 
 	void CameraInterpZoom(float DeltaTime);
+	void SetLookRates(float DeltaTime);
+
+
+	
+
+
 
 	/* Kamera varsayilan yakinlasma degeri*/
 	float CameraDefaultFOV;
@@ -114,5 +145,6 @@ public:
 	//herhangi bir deðer deðiþtirmediðimiz için const yaptýk
 	//Forceinline dediðimizde sadece >>return CameraBoom<< kýsmýný derlemeye çalýþacak
 
+	FORCEINLINE bool GetAiming() const { return bAiming; }
 
 };
