@@ -163,6 +163,8 @@ void AShooterCharacter::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	CameraInterpZoom(DeltaTime);
 	SetLookRates(DeltaTime);
+	//Crosshair hizini hesapliyoruz
+	CalculateCrosshairSpread(DeltaTime);
 }
 // Called to bind functionality to input
 void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -417,6 +419,11 @@ void AShooterCharacter::CalculateCrosshairSpread(float DeltaTime)
 	//velocity.size degerini walkspeedrange'e yaklasik olarak gelecek degeri, velocitymultiplierrange degerlerine donusturecek
 	//yani 0 ve 600 arasindaki gelen degeri, 0 ve 1 arasina cekecek.
 	CrosshairSpreadMultiplier = 0.5 + CrosshairVelocityFactor;
+}
+
+float AShooterCharacter::GetCrosshairSpreadMultiplier() const
+{
+	return CrosshairSpreadMultiplier;
 }
 
 
