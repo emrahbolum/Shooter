@@ -418,7 +418,19 @@ void AShooterCharacter::CalculateCrosshairSpread(float DeltaTime)
 	CrosshairVelocityFactor = FMath::GetMappedRangeValueClamped(WalkSpeedRange, VelocityMultiplierRange, Velocity.Size());
 	//velocity.size degerini walkspeedrange'e yaklasik olarak gelecek degeri, velocitymultiplierrange degerlerine donusturecek
 	//yani 0 ve 600 arasindaki gelen degeri, 0 ve 1 arasina cekecek.
-	CrosshairSpreadMultiplier = 0.5 + CrosshairVelocityFactor;
+	
+	//Karakter havada mi?
+	if (GetCharacterMovement()->IsFalling())
+	{
+		CrosshairInAirFactor = FMath::FInterpTo(CrosshairInAirFactor, 2.25f, DeltaTime, 2.25f);
+		//Enterpolasyon uyguladik. CrosshairInAirFactor mevcut, 2.25 hedef deltatime suresi ve 2.25 hizi ile
+	}
+	else
+	{
+		CrosshairInAirFactor = FMath::FInterpTo(CrosshairInAirFactor, 0.f, DeltaTime,30.f);
+		//yine enterpolasyon uyguladik. crosshairinairfactor mevcut, 0 hedef, deltatime suresi ve 30 birim hizinda
+	}
+	CrosshairSpreadMultiplier = 0.5 + CrosshairVelocityFactor+CrosshairInAirFactor;
 }
 
 float AShooterCharacter::GetCrosshairSpreadMultiplier() const
