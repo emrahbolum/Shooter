@@ -11,7 +11,7 @@
 #include "DrawDebugHelpers.h"
 #include "Particles/ParticleSystemComponent.h"
 // Sets default values
-AShooterCharacter::AShooterCharacter():
+AShooterCharacter::AShooterCharacter() :
 	BaseTurnRate(45.f),
 	BaseLookUpRate(45.f),
 	bAiming(false),
@@ -26,7 +26,16 @@ AShooterCharacter::AShooterCharacter():
 	MouseHipTurnRate(1.f),
 	MouseHipLookUpRate(1.f),
 	MouseAimingTurnRate(0.2f),
-	MouseAimingLookUpRate(0.2f)
+	MouseAimingLookUpRate(0.2f),
+	//Crosshair factors
+	CrosshairSpreadMultiplier(0.f),
+	CrosshairVelocityFactor(0.f),
+	CrosshairInAirFactor(0.f),
+	CrosshairAimFactor(0.f),
+	CrosshairShootingFactor(0.f),
+	//AteslemeTimer degiskenleri
+	ShootTimeDuration(0.02),
+	bFiringBullet(false)
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -321,6 +330,8 @@ void AShooterCharacter::FireWeapon()
 		AnimInstance->Montage_JumpToSection(FName("StartFire"));
 	}
 
+	//Mermi sekmesi icin zamanlayici baslatiliyor
+	StartCrosshairBulletFire();
 }
 
 bool AShooterCharacter::GetBeamEndLocation(const FVector& MuzzleSocketLocation, FVector& OutBeamLocation)
@@ -419,6 +430,17 @@ void AShooterCharacter::CalculateCrosshairSpread(float DeltaTime)
 	//velocity.size degerini walkspeedrange'e yaklasik olarak gelecek degeri, velocitymultiplierrange degerlerine donusturecek
 	//yani 0 ve 600 arasindaki gelen degeri, 0 ve 1 arasina cekecek.
 	
+
+	//Karakter zoom yapmis mi?
+	if (bAiming)
+	{
+		CrosshairAimFactor = FMath::FInterpTo(CrosshairAimFactor, 0.6f, DeltaTime, 30.f);
+	}
+	else
+	{
+		CrosshairAimFactor = FMath::FInterpTo(CrosshairAimFactor, 0.f, DeltaTime, 30.f);
+	}
+
 	//Karakter havada mi?
 	if (GetCharacterMovement()->IsFalling())
 	{
@@ -430,7 +452,35 @@ void AShooterCharacter::CalculateCrosshairSpread(float DeltaTime)
 		CrosshairInAirFactor = FMath::FInterpTo(CrosshairInAirFactor, 0.f, DeltaTime,30.f);
 		//yine enterpolasyon uyguladik. crosshairinairfactor mevcut, 0 hedef, deltatime suresi ve 30 birim hizinda
 	}
-	CrosshairSpreadMultiplier = 0.5 + CrosshairVelocityFactor+CrosshairInAirFactor;
+
+	//Ates ettikten 0.05 sn sonra
+	if (bFiringBullet)
+	{
+		CrosshairShootingFactor = FMath::FInterpTo(CrosshairShootingFactor, 0.3f, DeltaTime, 60.f);
+	}
+	else
+	{
+		CrosshairShootingFactor = FMath::FInterpTo(CrosshairShootingFactor, 0.f, DeltaTime, 60.f);
+	}
+
+	CrosshairSpreadMultiplier = 0.5 + CrosshairVelocityFactor+CrosshairInAirFactor - CrosshairAimFactor + CrosshairShootingFactor;	//aimi cikariyoruz kucultmek icin
+}
+
+void AShooterCharacter::StartCrosshairBulletFire()
+{
+	bFiringBullet = true;
+	GetWorldTimerManager().SetTimer(
+		CrosshairShootTimer,
+		this,
+		&AShooterCharacter::FinishCrosshairBulletFire,
+		ShootTimeDuration
+
+		);
+}
+
+void AShooterCharacter::FinishCrosshairBulletFire()
+{
+	bFiringBullet = false;
 }
 
 float AShooterCharacter::GetCrosshairSpreadMultiplier() const

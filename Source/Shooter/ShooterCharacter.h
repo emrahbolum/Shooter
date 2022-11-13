@@ -131,11 +131,13 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Crosshairs, meta = (AllowPrivateAccess = "true"))
 	float CrosshairInAirFactor;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Crosshairs, meta = (AllowPrivateAccess = "true"))
-	float CrossairAimFactor;
+	float CrosshairAimFactor;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Crosshairs, meta = (AllowPrivateAccess = "true"))
-	float CrossairShootingFactor;
+	float CrosshairShootingFactor;
 
-
+	float ShootTimeDuration;
+	bool bFiringBullet;
+	FTimerHandle CrosshairShootTimer;
 
 	//event tick icin kamera enterpolasyonu ve donusoranlari ayarlama 
 	void CameraInterpZoom(float DeltaTime);
@@ -145,7 +147,11 @@ private:
 	//event tick icin crosshair degerlerini atama
 	void CalculateCrosshairSpread(float DeltaTime);
 
+	void StartCrosshairBulletFire();
 
+	//Ates ettikten sonra zamanlayici baslayacak sekme yapmasi icin
+	UFUNCTION()
+	void FinishCrosshairBulletFire();
 
 	/* Kamera varsayilan yakinlasma degeri*/
 	float CameraDefaultFOV;
